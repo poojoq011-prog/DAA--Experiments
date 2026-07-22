@@ -1,1 +1,80 @@
+import heapq
 
+# Dijkstra's Algorithm
+def dijkstra(graph, source):
+    n = len(graph)
+    dist = [float('inf')] * n
+    parent = [-1] * n
+
+    dist[source] = 0
+    pq = [(0, source)]   # (distance, vertex)
+
+    while pq:
+        d, u = heapq.heappop(pq)
+
+        if d > dist[u]:
+            continue
+
+        for v, w in graph[u]:
+            if dist[u] + w < dist[v]:
+                dist[v] = dist[u] + w
+                parent[v] = u
+                heapq.heappush(pq, (dist[v], v))
+
+    return dist, parent
+
+
+# Function to print path
+def print_path(parent, v):
+    if v == -1:
+        return
+    print_path(parent, parent[v])
+    print(v, end=' ')
+
+
+# Graph with 8 vertices (0 to 7)
+graph = {
+    0: [(1, 4), (2, 8)],
+    1: [(2, 2), (3, 5)],
+    2: [(3, 5), (4, 9)],
+    3: [(4, 4), (5, 6)],
+    4: [(5, 3), (6, 7)],
+    5: [(6, 1), (7, 8)],
+    6: [(7, 2)],
+    7: []
+}
+
+source = 0
+dist, parent = dijkstra(graph, source)
+
+print("Shortest distances from source vertex", source)
+for i in range(len(graph)):
+    print(f"Vertex {i}: {dist[i]}")
+
+print("\nPaths from source vertex", source)
+for i in range(len(graph)):
+    print(f"To {i}: ", end='')
+    print_path(parent, i)
+    print()
+
+
+OUTPUT:
+Shortest distances from source vertex 0
+Vertex 0: 0
+Vertex 1: 4
+Vertex 2: 6
+Vertex 3: 9
+Vertex 4: 13
+Vertex 5: 15
+Vertex 6: 16
+Vertex 7: 18
+
+Paths from source vertex 0
+To 0: 0
+To 1: 0 1
+To 2: 0 1 2
+To 3: 0 1 3
+To 4: 0 1 3 4
+To 5: 0 1 3 4 5
+To 6: 0 1 3 4 5 6
+To 7: 0 1 3 4 5 6 7
