@@ -1,0 +1,98 @@
+import random
+
+# Global counters
+dc_comparisons = 0
+naive_comparisons = 0
+
+
+# Divide and Conquer method
+def min_max_dc(arr, low, high):
+    global dc_comparisons
+
+    # Only one element
+    if low == high:
+        return arr[low], arr[low]
+
+    # Two elements
+    if high == low + 1:
+        dc_comparisons += 1
+        if arr[low] < arr[high]:
+            return arr[low], arr[high]
+        else:
+            return arr[high], arr[low]
+
+    # Divide
+    mid = (low + high) // 2
+    min1, max1 = min_max_dc(arr, low, mid)
+    min2, max2 = min_max_dc(arr, mid + 1, high)
+
+    # Conquer
+    dc_comparisons += 2
+
+    minimum = min1 if min1 < min2 else min2
+    maximum = max1 if max1 > max2 else max2
+
+    return minimum, maximum
+
+
+# Naive method
+def min_max_naive(arr):
+    global naive_comparisons
+
+    minimum = maximum = arr[0]
+
+    for i in range(1, len(arr)):
+        naive_comparisons += 1
+        if arr[i] < minimum:
+            minimum = arr[i]
+
+        naive_comparisons += 1
+        if arr[i] > maximum:
+            maximum = arr[i]
+
+    return minimum, maximum
+
+
+# Input sizes
+sizes = [20, 200, 2000, 20000]
+
+for n in sizes:
+    arr = [random.randint(1, 100000) for _ in range(n)]
+
+    dc_comparisons = 0
+    naive_comparisons = 0
+
+    min_dc, max_dc = min_max_dc(arr, 0, n - 1)
+    min_nv, max_nv = min_max_naive(arr)
+
+    print(f"\nArray Size: {n}")
+    print(f"Minimum value: {min_dc}")
+    print(f"Maximum value: {max_dc}")
+    print(f"Divide & Conquer Comparisons: {dc_comparisons}")
+    print(f"Naive Comparisons: {naive_comparisons}")
+
+OUTPUT:
+
+Array Size: 20
+Minimum value: 1123
+Maximum value: 98765
+Divide & Conquer Comparisons: 30
+Naive Comparisons: 38
+
+Array Size: 200
+Minimum value: 215
+Maximum value: 99871
+Divide & Conquer Comparisons: 300
+Naive Comparisons: 398
+
+Array Size: 2000
+Minimum value: 14
+Maximum value: 99994
+Divide & Conquer Comparisons: 3000
+Naive Comparisons: 3998
+
+Array Size: 20000
+Minimum value: 3
+Maximum value: 99999
+Divide & Conquer Comparisons: 30000
+Naive Comparisons: 39998
